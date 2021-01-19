@@ -268,6 +268,6 @@ if __name__ == "__main__":
     # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
     flag = False
     while True:
-        flag = video_download(1)
+        flag = video_download(5)
         video_upload()
         if flag: break
