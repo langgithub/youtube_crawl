@@ -220,6 +220,7 @@ def video_upload():
         file_path = "{}/video_dir/{}".format(path, name)
         size = int(os.path.getsize(file_path)/float(1024*1024))
         url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, name)
+        print(url)
         if size < 100:
             ret = obs.put_object_from_file(bucket_name, name, file_path)
             print(ret.get_e_tag())
@@ -239,5 +240,8 @@ def video_upload():
 
 if __name__ == "__main__":
     # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
-    while video_download(1) != 0:
+
+    while True:
+        flag = video_download(1)
         video_upload()
+        if flag: break
