@@ -5,6 +5,7 @@
 # file: ad_crawl.py
 
 # -*- coding: utf-8 -*-
+import os
 import io
 import base64
 import pickle
@@ -41,6 +42,7 @@ urllib3.disable_warnings()
 obs_host = "obs-cn-shenzhen.yun.pingan.com"
 obs_access_key = 'QTU2QjkyRjFFRDhGNDJDMzlBRkFDQUUyMTU5Q0Y5REM'
 obs_secret_key = 'QzFBODBEQTFDNEVENEU1NDlDQkEwNjMwQzk2MzU2MkM'
+bucket_name = "spider_ad"
 
 
 class ErrorLog(object):
@@ -123,22 +125,21 @@ class AdCrawl(BaseSpiderCrack):
                 sheet1.cell(row=i, column=j, value=value)
         wb.save(path)
 
-    def parse_3(self,response):
-        data = response.meta.get("data")
-        id = response.request.meta.get("id")
-        url =f"http://obs-cn-shenzhen.yun.pingan.com/spider/{id}.pdf"
-        data["url"]=url
-        data["id"]=id
-        # print(data)
-        yield data
-        self.put_stream(id,response.body)
 
-    def put_stream(self, id, content):
-        file_like = BufferedReader(BytesIO(content))
-        self.logger.debug(type(file_like))
-        obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
-        ret = obs.put_object(bucket_name, id+".pdf", file_like)
-        self.logger.debug(ret)
+def update_to_excel(path, items_key):
+    wb = load_workbook(path)
+    # wb = Workbook()
+    sheets = wb.worksheets  # 获取当前所有的sheet
+
+    sheet1 = sheets[0]
+    print(sheet1)
+
+    for i in range(1, rows + 1):
+        title = sheet1.cell(row=i, column=1).value
+        if title in items_key:
+            sheet1.cell(row=i, column=4, value="yes")
+            sheet1.cell(row=i, column=5, value=items_key[title])
+    wb.save(path)
 
 
 def video_list():
@@ -169,31 +170,60 @@ def get_href(path):
     rows = sheet1.max_row
     column = sheet1.max_column
     print(rows, column)
-    # 启动线程池下载
-    return [sheet1.cell(row=i, column=2).value for i in range(1, rows + 1)]
+    return [sheet1.cell(row=i, column=2).value for i in range(1, rows + 1) if sheet1.cell(row=i, column=4).value == "no"]
 
 
-def video_download():
-
+def video_download(limit):
     def download(url):
         print("download url>>>>{0}".format(url))
-        youtube.download(url, info_only=True)
+        youtube.download(url, merge=True, output_dir='video_dir', itag=18)
+        # youtube.download(url, info_only=True)
 
-    href1 = get_href("youtube_创意广告.xlsx")
+    href1 = get_href("youtube_创意广告的副本.xlsx")
     print(href1)
-    href2 = get_href("youtube_泰国广告.xlsx")
+    href2 = get_href("youtube_泰国广告的副本.xlsx")
     print(href2)
     hrefs = href1 + href2
+    hrefs = hrefs[:limit]
 
     with ThreadPoolExecutor(max_workers=5) as t:
         for href in hrefs:
             t.submit(download, href)
 
+    return len(hrefs) == 0
+
+
+def notify_upload(upload_id, state, total_parts, finish_parts):
+    print("%s %s %s of %s" % (upload_id, state, finish_parts, total_parts))
+
 
 def video_upload():
-    pass
+    obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
+    path = os.path.dirname(__file__)
+    dirs = os.listdir(path+"/video_dir")
+    look_urls = {}
+    for name in dirs:
+        file_path = "{}/video_dir/{}".format(path, name)
+        size = int(os.path.getsize(file_path)/float(1024*1024))
+        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, name)
+        if size < 100:
+            ret = obs.put_object_from_file(bucket_name, name, file_path)
+            print(ret.get_e_tag())
+        else:
+            multipart_request = MultipartUploadFileRequest()
+            multipart_request.set_bucket_name(bucket_name)
+            multipart_request.set_object_key(name)
+            multipart_request.set_upload_file_path(file_path)
+            multipart_request.set_upload_notifier(notify_upload)
+            obs.put_object_multipart(multipart_request)
+        look_urls[name] = url
+
+    update_to_excel("youtube_创意广告的副本.xlsx", look_urls)
+    update_to_excel("youtube_泰国广告的副本.xlsx", look_urls)
+    os.removedirs(dirs)
 
 
 if __name__ == "__main__":
-    youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_创意广告')
-    # video_download()
+    # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
+    while video_download(5) != 0:
+        video_upload()
