@@ -204,9 +204,6 @@ def video_download(limit):
     for p in pools:
         p.join()
 
-    for p in pools:
-        p.close()
-
     print("本轮下载结束")
     return len(hrefs) == 0
 
