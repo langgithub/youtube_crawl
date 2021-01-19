@@ -14,6 +14,7 @@ import urllib3
 import functools
 import random
 import time
+import hashlib
 from openpyxl import load_workbook, Workbook
 from selenium import webdriver
 from scrapy import Selector
@@ -142,7 +143,7 @@ def update_to_excel(path, items_key):
         if title in items_key:
             sheet1.cell(row=i, column=4, value="yes")
             sheet1.cell(row=i, column=5, value=items_key[title])
-    wb.save(path)
+    wb.save(filename=path)
 
 
 def video_list():
@@ -215,29 +216,47 @@ def notify_upload(upload_id, state, total_parts, finish_parts):
 
 
 def video_upload():
-    obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
-    # path = os.path.dirname(__file__)
-    path = "/root/project/youtube_crawl"
-    dir_path = path+"/video_dir"
-    print(dir_path)
-    dirs = os.listdir(dir_path)
-    look_urls = {}
-    for name in dirs:
-        file_path = "{}/video_dir/{}".format(path, name)
-        size = int(os.path.getsize(file_path)/float(1024*1024))
-        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, name)
+
+    def upload(_path, _name):
+        obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
+        file_path = "{}/video_dir/{}".format(_path, _name)
+        size = int(os.path.getsize(file_path) / float(1024 * 1024))
+        input_name = hashlib.md5()  # 要加密的字符串
+        input_name.update(_name.encode("utf-8"))
+        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, input_name.hexdigest())
         print(url)
         if size < 100:
-            ret = obs.put_object_from_file(bucket_name, name, file_path)
+            ret = obs.put_object_from_file(bucket_name, input_name.hexdigest(), file_path)
             print(ret.get_e_tag())
         else:
             multipart_request = MultipartUploadFileRequest()
             multipart_request.set_bucket_name(bucket_name)
-            multipart_request.set_object_key(name)
+            multipart_request.set_object_key(input_name.hexdigest())
             multipart_request.set_upload_file_path(file_path)
             multipart_request.set_upload_notifier(notify_upload)
             obs.put_object_multipart(multipart_request)
-        look_urls[name] = url
+
+
+    path = os.path.dirname(__file__)
+    # path = "/root/project/youtube_crawl"
+    dir_path = path+"/video_dir"
+    print(dir_path)
+    dirs = os.listdir(dir_path)
+    look_urls = {}
+    pools = []
+    for name in dirs:
+        p = Process(target=upload, args=(path, name))
+        pools.append(p)
+        input_name = hashlib.md5()  # 要加密的字符串
+        input_name.update(name.encode("utf-8"))
+        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, input_name.hexdigest())
+        look_urls[name.replace(".mp4", "")] = url
+
+    for p in pools:
+        p.start()
+
+    for p in pools:
+        p.join()
 
     update_to_excel("youtube_创意广告的副本.xlsx", look_urls)
     update_to_excel("youtube_泰国广告的副本.xlsx", look_urls)
@@ -250,6 +269,6 @@ if __name__ == "__main__":
     # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
     flag = False
     while True:
-        flag = video_download(1)
+        # flag = video_download(1)
         video_upload()
         if flag: break
