@@ -182,7 +182,7 @@ def video_download(limit):
         result = os.system("you-get --o=video_dir --itag=18 {0}".format(url))
         # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
         # youtube.download(url, info_only=True)
-        print("download url>>>> {0} 下载完成 result={}".format(url, result))
+        print("download url>>>> {0} 下载完成 result={1}".format(url, result))
 
     href1 = get_href("youtube_创意广告的副本.xlsx")
     print(href1)
