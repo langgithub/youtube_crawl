@@ -19,6 +19,7 @@ from selenium import webdriver
 from scrapy import Selector
 from abc import ABCMeta, abstractmethod
 from PIL import Image, ImageChops
+from concurrent.futures import ThreadPoolExecutor
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from you_get.extractors import (
