@@ -186,9 +186,7 @@ def video_download(limit):
         print("download url>>>> {0} 下载完成 result={1}".format(url, result))
 
     href1 = get_href("youtube_创意广告.xlsx")
-    print(href1)
     href2 = get_href("youtube_泰国广告.xlsx")
-    print(href2)
     hrefs = href1 + href2
     hrefs = hrefs[:limit]
 
