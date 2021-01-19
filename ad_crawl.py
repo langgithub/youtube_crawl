@@ -195,5 +195,5 @@ def video_upload():
 
 
 if __name__ == "__main__":
-    youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM')
+    youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', output_dir="video_创意广告")
     # video_download()
