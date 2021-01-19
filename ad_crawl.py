@@ -237,8 +237,8 @@ def video_upload():
             obs.put_object_multipart(multipart_request)
 
 
-    path = os.path.dirname(__file__)
-    # path = "/root/project/youtube_crawl"
+    # path = os.path.dirname(__file__)
+    path = "/root/project/youtube_crawl"
     dir_path = path+"/video_dir"
     print(dir_path)
     dirs = os.listdir(dir_path)
