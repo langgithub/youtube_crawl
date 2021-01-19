@@ -136,6 +136,7 @@ def update_to_excel(path, items_key):
     sheet1 = sheets[0]
     print(sheet1)
 
+    rows = sheet1.max_row
     for i in range(1, rows + 1):
         title = sheet1.cell(row=i, column=1).value
         if title in items_key:
@@ -235,13 +236,15 @@ def video_upload():
 
     update_to_excel("youtube_创意广告的副本.xlsx", look_urls)
     update_to_excel("youtube_泰国广告的副本.xlsx", look_urls)
-    os.removedirs(dirs)
+    for name in dirs:
+        file_path = "{}/video_dir/{}".format(path, name)
+        os.remove(file_path)
 
 
 if __name__ == "__main__":
     # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
-
+    flag = False
     while True:
-        flag = video_download(1)
+        # flag = video_download(1)
         video_upload()
         if flag: break
