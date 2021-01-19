@@ -185,9 +185,9 @@ def video_download(limit):
         # youtube.download(url, info_only=True)
         print("download url>>>> {0} 下载完成 result={1}".format(url, result))
 
-    href1 = get_href("youtube_创意广告的副本.xlsx")
+    href1 = get_href("youtube_创意广告.xlsx")
     print(href1)
-    href2 = get_href("youtube_泰国广告的副本.xlsx")
+    href2 = get_href("youtube_泰国广告.xlsx")
     print(href2)
     hrefs = href1 + href2
     hrefs = hrefs[:limit]
@@ -257,8 +257,8 @@ def video_upload():
     for p in pools:
         p.join()
 
-    update_to_excel("youtube_创意广告的副本.xlsx", look_urls)
-    update_to_excel("youtube_泰国广告的副本.xlsx", look_urls)
+    update_to_excel("youtube_创意广告.xlsx", look_urls)
+    update_to_excel("youtube_泰国广告.xlsx", look_urls)
     for name in dirs:
         file_path = "{}/video_dir/{}".format(path, name)
         os.remove(file_path)
