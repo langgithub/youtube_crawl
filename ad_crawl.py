@@ -177,9 +177,10 @@ def get_href(path):
 
 def video_download(limit):
     def download(url):
-        print("download url>>>>{0}".format(url))
+        print("download url>>>> {0} 下载开始".format(url))
         youtube.download(url, merge=True, output_dir='video_dir', itag=18)
         # youtube.download(url, info_only=True)
+        print("download url>>>> {0} 下载完成".format(url))
 
     href1 = get_href("youtube_创意广告的副本.xlsx")
     print(href1)
@@ -202,6 +203,7 @@ def video_download(limit):
     for p in pools:
         p.join()
 
+    print("本轮下载结束")
     return len(hrefs) == 0
 
 
