@@ -179,7 +179,8 @@ def get_href(path):
 def video_download(limit):
     def download(url):
         print("download url>>>> {0} 下载开始".format(url))
-        result = os.system("you-get --output_dir=video_dir --itag=18 {0}".format(url))
+        id = url[32:]
+        result = os.system("you-get -o /root/project/youtube_crawl/video_dir/{}.mp4 --itag=18 {}".format(id, url))
         # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
         # youtube.download(url, info_only=True)
         print("download url>>>> {0} 下载完成 result={1}".format(url, result))
