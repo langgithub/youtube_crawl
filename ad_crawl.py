@@ -20,6 +20,7 @@ from scrapy import Selector
 from abc import ABCMeta, abstractmethod
 from PIL import Image, ImageChops
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Process
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from you_get.extractors import (
@@ -187,9 +188,19 @@ def video_download(limit):
     hrefs = href1 + href2
     hrefs = hrefs[:limit]
 
-    with ThreadPoolExecutor(max_workers=5) as t:
-        for href in hrefs:
-            t.submit(download, href)
+    # with ThreadPoolExecutor(max_workers=5) as t:
+    #     for href in hrefs:
+    #         t.submit(download, href)
+    pools = []
+    for href in hrefs:
+        p = Process(target=download, args=(href,))
+        pools.append(p)
+
+    for p in pools:
+        p.start()
+
+    for p in pools:
+        p.join()
 
     return len(hrefs) == 0
 
