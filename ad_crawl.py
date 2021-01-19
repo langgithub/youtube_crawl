@@ -44,7 +44,7 @@ urllib3.disable_warnings()
 obs_host = "obs-cn-shenzhen.yun.pingan.com"
 obs_access_key = 'QTU2QjkyRjFFRDhGNDJDMzlBRkFDQUUyMTU5Q0Y5REM'
 obs_secret_key = 'QzFBODBEQTFDNEVENEU1NDlDQkEwNjMwQzk2MzU2MkM'
-bucket_name = "spider_ad"
+bucket_name = "spider"
 
 
 class ErrorLog(object):
