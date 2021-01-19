@@ -204,6 +204,9 @@ def video_download(limit):
     for p in pools:
         p.join()
 
+    for p in pools:
+        p.close()
+
     print("本轮下载结束")
     return len(hrefs) == 0
 
@@ -215,8 +218,9 @@ def notify_upload(upload_id, state, total_parts, finish_parts):
 def video_upload():
     obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
     path = os.path.dirname(__file__)
-    print(path)
-    dirs = os.listdir(path+"/video_dir")
+    dir_path = path+"/video_dir"
+    print(dir_path)
+    dirs = os.listdir(dir_path)
     look_urls = {}
     for name in dirs:
         file_path = "{}/video_dir/{}".format(path, name)
