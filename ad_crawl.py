@@ -237,5 +237,5 @@ def video_upload():
 
 if __name__ == "__main__":
     # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
-    while video_download(5) != 0:
+    while video_download(1) != 0:
         video_upload()
