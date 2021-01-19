@@ -215,6 +215,7 @@ def notify_upload(upload_id, state, total_parts, finish_parts):
 def video_upload():
     obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
     path = os.path.dirname(__file__)
+    print(path)
     dirs = os.listdir(path+"/video_dir")
     look_urls = {}
     for name in dirs:
