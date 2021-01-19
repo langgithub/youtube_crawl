@@ -196,6 +196,6 @@ def video_upload():
 
 if __name__ == "__main__":
     youtube.download(
-        'http://www.youtube.com/watch?v=pzKerr0JIPA', info_only=True
+        'https://www.youtube.com/watch?v=o2kLaT5sRzM', info_only=True
     )
     # video_download()
