@@ -179,11 +179,14 @@ def get_href(path):
 
 def video_download(limit, _file_name):
     def download(url):
-        print("download url>>>> {0} 下载开始".format(url))
-        result = os.system("you-get -o /root/project/youtube_crawl/video_dir --itag=18 {}".format(url))
-        # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
-        # youtube.download(url, info_only=True)
-        print("download url>>>> {0} 下载完成 result={1}".format(url, result))
+        try:
+            print("download url>>>> {0} 下载开始".format(url))
+            result = os.system("you-get -o /root/project/youtube_crawl/video_dir --itag=18 {}".format(url))
+            # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
+            # youtube.download(url, info_only=True)
+            print("download url>>>> {0} 下载完成 result={1}".format(url, result))
+        except Exception as e:
+            print(e)
 
     href1 = get_href(_file_name)
     # href1 = get_href("youtube_创意广告.xlsx")
