@@ -245,7 +245,7 @@ def video_upload(_file_name):
         pools.append(p)
         input_name = hashlib.md5()  # 要加密的字符串
         input_name.update(name.encode("utf-8"))
-        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, input_name.hexdigest())
+        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}.mp4".format(bucket_name, input_name.hexdigest())
         look_urls[name.replace(".mp4", "")] = url
 
     for p in pools:
