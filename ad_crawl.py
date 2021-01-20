@@ -188,8 +188,8 @@ def video_download(limit, _file_name):
     href1 = get_href(_file_name)
     # href1 = get_href("youtube_创意广告.xlsx")
     # href2 = get_href("youtube_泰国广告.xlsx")
-    hrefs = href1 + href2
-    hrefs = hrefs[:limit]
+    # hrefs = href1 + href2
+    hrefs = href1[:limit]
 
     # with ThreadPoolExecutor(max_workers=5) as t:
     #     for href in hrefs:
