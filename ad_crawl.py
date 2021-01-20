@@ -35,7 +35,6 @@ from you_get.extractors import (
     tiktok
 )
 
-
 from obssdk.obs import ObsOperator, MultipartUploadFileRequest
 from obssdk.obs.util import *
 from io import BytesIO, BufferedReader
@@ -78,7 +77,7 @@ class AdCrawl(BaseSpiderCrack):
 
     def check_response(self):
         """检查是否成功"""
-        pickle.dump(self.driver.get_cookies(), open("cookies.pkl","wb"))
+        pickle.dump(self.driver.get_cookies(), open("cookies.pkl", "wb"))
 
     def crack(self):
         """执行破解程序"""
@@ -100,7 +99,7 @@ class AdCrawl(BaseSpiderCrack):
         result_videos = []
         for video in videos:
             title = video.css("a::attr(title)").extract()[0]
-            href = "https://www.youtube.com"+video.css("a::attr(href)").extract()[0]
+            href = "https://www.youtube.com" + video.css("a::attr(href)").extract()[0]
             label = video.css("a::attr(aria-label)").extract()[0]
             result_videos.append([title, href, label])
 
@@ -174,10 +173,11 @@ def get_href(path):
     rows = sheet1.max_row
     column = sheet1.max_column
     print(rows, column)
-    return [sheet1.cell(row=i, column=2).value for i in range(1, rows + 1) if sheet1.cell(row=i, column=4).value == "no"]
+    return [sheet1.cell(row=i, column=2).value for i in range(1, rows + 1) if
+            sheet1.cell(row=i, column=4).value == "no"]
 
 
-def video_download(limit):
+def video_download(limit, _file_name):
     def download(url):
         print("download url>>>> {0} 下载开始".format(url))
         result = os.system("you-get -o /root/project/youtube_crawl/video_dir --itag=18 {}".format(url))
@@ -185,8 +185,9 @@ def video_download(limit):
         # youtube.download(url, info_only=True)
         print("download url>>>> {0} 下载完成 result={1}".format(url, result))
 
-    href1 = get_href("youtube_创意广告.xlsx")
-    href2 = get_href("youtube_泰国广告.xlsx")
+    href1 = get_href(_file_name)
+    # href1 = get_href("youtube_创意广告.xlsx")
+    # href2 = get_href("youtube_泰国广告.xlsx")
     hrefs = href1 + href2
     hrefs = hrefs[:limit]
 
@@ -212,31 +213,29 @@ def notify_upload(upload_id, state, total_parts, finish_parts):
     print("%s %s %s of %s" % (upload_id, state, finish_parts, total_parts))
 
 
-def video_upload():
-
+def video_upload(_file_name):
     def upload(_path, _name):
         obs = ObsOperator(obs_host, obs_access_key, obs_secret_key)
-        file_path = "{}/video_dir/{}".format(_path, _name)
-        size = int(os.path.getsize(file_path) / float(1024 * 1024))
-        input_name = hashlib.md5()  # 要加密的字符串
-        input_name.update(_name.encode("utf-8"))
-        url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, input_name.hexdigest())
-        print(url)
+        _file_path = "{}/video_dir/{}".format(_path, _name)
+        size = int(os.path.getsize(_file_path) / float(1024 * 1024))
+        _input_name = hashlib.md5()  # 要加密的字符串
+        _input_name.update(_name.encode("utf-8"))
+        _url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, _input_name.hexdigest())
+        print(_url)
         if size < 100:
-            ret = obs.put_object_from_file(bucket_name, input_name.hexdigest(), file_path)
+            ret = obs.put_object_from_file(bucket_name, _input_name.hexdigest(), _file_path)
             print(ret.get_e_tag())
         else:
             multipart_request = MultipartUploadFileRequest()
             multipart_request.set_bucket_name(bucket_name)
-            multipart_request.set_object_key(input_name.hexdigest())
-            multipart_request.set_upload_file_path(file_path)
+            multipart_request.set_object_key(_input_name.hexdigest())
+            multipart_request.set_upload_file_path(_file_path)
             multipart_request.set_upload_notifier(notify_upload)
             obs.put_object_multipart(multipart_request)
 
-
     # path = os.path.dirname(__file__)
     path = "/root/project/youtube_crawl"
-    dir_path = path+"/video_dir"
+    dir_path = path + "/video_dir"
     print(dir_path)
     dirs = os.listdir(dir_path)
     look_urls = {}
@@ -255,17 +254,39 @@ def video_upload():
     for p in pools:
         p.join()
 
-    update_to_excel("youtube_创意广告.xlsx", look_urls)
-    update_to_excel("youtube_泰国广告.xlsx", look_urls)
+    update_to_excel(_file_name, look_urls)
+    # update_to_excel("youtube_创意广告.xlsx", look_urls)
+    # update_to_excel("youtube_泰国广告.xlsx", look_urls)
     for name in dirs:
         file_path = "{}/video_dir/{}".format(path, name)
         os.remove(file_path)
 
 
+def get_ip():
+    _ip = "127.0.0.1"
+    try:
+        import socket
+        host = socket.gethostname()
+        _ip = socket.gethostbyname(host)
+    except Exception as e:
+        print(e)
+    return _ip
+
+
 if __name__ == "__main__":
-    # youtube.download('https://www.youtube.com/watch?v=o2kLaT5sRzM', merge=True, output_dir='video_dir', itag=18)
+    ip = get_ip()
     flag = False
-    while True:
-        flag = video_download(5)
-        video_upload()
+    is_running = True
+    file_name = ""
+    if ip == "127.0.0.1":
+        is_running = False
+    elif ip == "10.20.29.130":
+        file_name = "youtube_创意广告.xlsx"
+    elif ip == "10.20.29.131":
+        file_name = "youtube_泰国广告.xlsx"
+
+    # run
+    while is_running:
+        flag = video_download(5, file_name)
+        video_upload(file_name)
         if flag: break
