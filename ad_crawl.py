@@ -220,7 +220,7 @@ def video_upload(_file_name):
         size = int(os.path.getsize(_file_path) / float(1024 * 1024))
         _input_name = hashlib.md5()  # 要加密的字符串
         _input_name.update(_name.encode("utf-8"))
-        _url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}".format(bucket_name, _input_name.hexdigest())
+        _url = "http://obs-cn-shenzhen.yun.pingan.com/{0}/{1}.mp4".format(bucket_name, _input_name.hexdigest())
         print(_url)
         if size < 100:
             ret = obs.put_object_from_file(bucket_name, _input_name.hexdigest(), _file_path)
