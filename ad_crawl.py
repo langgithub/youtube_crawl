@@ -38,6 +38,10 @@ from you_get.extractors import (
 from obssdk.obs import ObsOperator, MultipartUploadFileRequest
 from obssdk.obs.util import *
 from io import BytesIO, BufferedReader
+from redis_cluster_helper import redis_cluster
+rh = redis_cluster()
+
+print(rh.rpoplpush("hk_vps", "hk_vps"))
 
 urllib3.disable_warnings()
 # 深圳地址
@@ -282,7 +286,8 @@ if __name__ == "__main__":
     is_running = True
     file_name = ""
     if ip == "127.0.0.1":
-        is_running = False
+        # is_running = False
+        file_name = "youtube_创意广告.xlsx"
     elif ip == "10.20.29.130":
         file_name = "youtube_创意广告.xlsx"
     elif ip == "10.20.29.131":
