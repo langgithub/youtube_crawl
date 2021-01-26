@@ -41,7 +41,6 @@ from io import BytesIO, BufferedReader
 from redis_cluster_helper import redis_cluster
 rh = redis_cluster()
 
-print(rh.rpoplpush("hk_vps", "hk_vps"))
 
 urllib3.disable_warnings()
 # 深圳地址
@@ -182,10 +181,13 @@ def get_href(path):
 
 
 def video_download(limit, _file_name):
+    _ip = "{}:31289".format(rh.rpoplpush("hk_vps", "hk_vps"))
+    print(_ip)
+
     def download(url):
         try:
             print("download url>>>> {0} 下载开始".format(url))
-            result = os.system("you-get -o /root/project/youtube_crawl/video_dir --itag=18 {}".format(url))
+            result = os.system("you-get -o /root/project/youtube_crawl/video_dir -x {} --itag=18 {}".format(_ip, url))
             # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
             # youtube.download(url, info_only=True)
             print("download url>>>> {0} 下载完成 result={1}".format(url, result))
