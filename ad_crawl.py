@@ -294,6 +294,8 @@ if __name__ == "__main__":
         file_name = "youtube_创意广告.xlsx"
     elif ip == "10.20.29.131":
         file_name = "youtube_泰国广告.xlsx"
+    elif ip == "10.8.184.25":
+        file_name = "youtube_创意广告.xlsx"
 
     # run
     while is_running:
