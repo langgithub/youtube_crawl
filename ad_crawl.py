@@ -39,7 +39,7 @@ from obssdk.obs import ObsOperator, MultipartUploadFileRequest
 from obssdk.obs.util import *
 from io import BytesIO, BufferedReader
 from redis_cluster_helper import redis_cluster
-rh = redis_cluster()
+
 
 
 urllib3.disable_warnings()
@@ -181,7 +181,10 @@ def get_href(path):
 
 
 def video_download(limit, _file_name):
+    rh = redis_cluster()
     _ip = "{}:31289".format(rh.rpoplpush("hk_vps", "hk_vps"))
+    # _ip = "103.122.177.88:31289"
+    rh = None
     print(_ip)
 
     def download(url):
