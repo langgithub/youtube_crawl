@@ -183,7 +183,7 @@ def get_href(path):
 def video_download(limit, _file_name):
     # rh = redis_cluster()
     # _ip = "{}:31289".format(rh.rpoplpush("hk_vps", "hk_vps"))
-    _ip = "45.133.237.230:31289"
+    _ip = "45.137.9.15:31289"
     rh = None
     print(_ip)
 
