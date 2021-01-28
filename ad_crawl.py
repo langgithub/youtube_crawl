@@ -7,6 +7,7 @@
 # -*- coding: utf-8 -*-
 import os
 import io
+import json
 import base64
 import pickle
 import requests
@@ -183,16 +184,17 @@ def get_href(path):
 def video_download(limit, _file_name):
     # rh = redis_cluster()
     # _ip = "{}:31289".format(rh.rpoplpush("hk_vps", "hk_vps"))
-    _ip = "45.137.9.15:31289"
-    rh = None
-    print(_ip)
+    ip_list = []
+    try:
+        response = requests.get("https://lookout.pais.pingan.com/proxy_server/select?isown=3&protocol=2&site=test&token=4cc5fbe69e2a93d48bef68319b763541&count={0}".format(limit))
+        ip_list = json.loads(response.text)["data"]
+    except Exception as e:
+        print(e)
 
-    def download(url):
+    def download(_command):
         try:
-            print("download url>>>> {0} 下载开始".format(url))
-            result = os.system("you-get -o /root/project/youtube_crawl/video_dir -x {} --itag=18 {}".format(_ip, url))
+            result = os.system(_command)
             # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
-            # youtube.download(url, info_only=True)
             print("download url>>>> {0} 下载完成 result={1}".format(url, result))
         except Exception as e:
             print(e)
@@ -208,7 +210,10 @@ def video_download(limit, _file_name):
     #         t.submit(download, href)
     pools = []
     for href in hrefs:
-        p = Process(target=download, args=(href,))
+        _ip = ip_list.pop()
+        command = "you-get -o /root/project/youtube_crawl/video_dir -x {} --itag=18 {}".format(_ip, href)
+        print("excute command >>>>> {0}".format(command))
+        p = Process(target=download, args=(command,))
         pools.append(p)
 
     for p in pools:
