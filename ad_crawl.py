@@ -195,7 +195,7 @@ def video_download(limit, _file_name):
         try:
             result = os.system(_command)
             # youtube.download(url, merge=True, output_dir='video_dir', itag=18)
-            print("download url>>>> {0} 下载完成 result={1}".format(url, result))
+            print("command={0},下载完成result={1}".format(_command, result))
         except Exception as e:
             print(e)
 
