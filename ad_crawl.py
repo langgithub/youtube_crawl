@@ -307,6 +307,9 @@ if __name__ == "__main__":
 
     # run
     while is_running:
-        flag = video_download(5, file_name)
-        video_upload(file_name)
-        if flag: break
+        try:
+            flag = video_download(5, file_name)
+            video_upload(file_name)
+            if flag: break
+        except Exception as e:
+            print(e)
