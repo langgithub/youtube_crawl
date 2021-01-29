@@ -142,8 +142,8 @@ def update_to_excel(path, items_key):
 
     rows = sheet1.max_row
     for i in range(1, rows + 1):
-        title = sheet1.cell(row=i, column=1).value
-        if title in items_key:
+        url = sheet1.cell(row=i, column=2).value[32:]
+        if url in items_key:
             sheet1.cell(row=i, column=4, value="yes")
             sheet1.cell(row=i, column=5, value=items_key[title])
     wb.save(filename=path)
@@ -211,7 +211,7 @@ def video_download(limit, _file_name):
     pools = []
     for href in hrefs:
         _ip = ip_list.pop() + ":31289"
-        command = "you-get -o /root/project/youtube_crawl/video_dir -x {} -t 30 --itag=18 {}".format(_ip, href)
+        command = "you-get -o /root/project/youtube_crawl/video_dir -O {} -x {} -t 30 --itag=18 {}".format(href[32:], _ip, href)
         print("excute command >>>>> {0}".format(command))
         p = Process(target=download, args=(command,))
         pools.append(p)
