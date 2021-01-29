@@ -39,7 +39,7 @@ from you_get.extractors import (
 from obssdk.obs import ObsOperator, MultipartUploadFileRequest
 from obssdk.obs.util import *
 from io import BytesIO, BufferedReader
-from redis_cluster_helper import redis_cluster
+# from redis_cluster_helper import redis_cluster
 
 
 
