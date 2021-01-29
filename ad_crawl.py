@@ -145,7 +145,7 @@ def update_to_excel(path, items_key):
         url = sheet1.cell(row=i, column=2).value[32:]
         if url in items_key:
             sheet1.cell(row=i, column=4, value="yes")
-            sheet1.cell(row=i, column=5, value=items_key[title])
+            sheet1.cell(row=i, column=5, value=items_key[url])
     wb.save(filename=path)
 
 
