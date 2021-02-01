@@ -212,8 +212,7 @@ def video_download(limit, _file_name):
     pools = []
     for href in hrefs:
         _ip = ip_list.pop() + ":31289"
-        href = href.replace("-", "")
-        command = "you-get -o /root/project/youtube_crawl/video_dir -O {} -x {} -t 30 --itag=18 {}".format(href[32:], _ip, href)
+        command = "you-get -o /root/project/youtube_crawl/video_dir -O {} -x {} -t 30 --itag=18 {}".format(href[32:].replace("-", ""), _ip, href)
         print("excute command >>>>> {0}".format(command))
         p = Process(target=download, args=(command,))
         pools.append(p)
