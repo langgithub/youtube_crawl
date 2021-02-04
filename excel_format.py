@@ -20,7 +20,7 @@ def update_to_excel(path):
         status = sheet1.cell(row=i, column=4).value
         if status =="yes":
             url = sheet1.cell(row=i, column=5).value
-            if ".mp4" in url:
+            if url is not None and ".mp4" in url:
                 new_url = url.replace(".mp4", "")
                 sheet1.cell(row=i, column=5, value=new_url)
 
@@ -28,4 +28,6 @@ def update_to_excel(path):
 
 
 if __name__ == "__main__":
-    update_to_excel("youtube_创意广告的副本.xlsx")
+    pass
+    # update_to_excel("youtube_创意广告.xlsx")
+    # update_to_excel("youtube_泰国广告.xlsx")
