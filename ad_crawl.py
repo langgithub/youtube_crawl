@@ -187,7 +187,9 @@ def video_download(limit, _file_name):
     # _ip = "{}:31289".format(rh.rpoplpush("hk_vps", "hk_vps"))
     ip_list = []
     try:
-        response = requests.get("https://lookout.pais.pingan.com/proxy_server/select?isown=3&protocol=2&site=test&token=4cc5fbe69e2a93d48bef68319b763541&count={0}".format(limit))
+        url = "https://lookout.pais.pingan.com/proxy_server/select?isown=3&protocol=2&site=test&token=4cc5fbe69e2a93d48bef68319b763541&count={0}".format(limit)
+        print(url)
+        response = requests.get(url)
         ip_list = json.loads(response.text)["data"]
     except Exception as e:
         print(e)
