@@ -192,7 +192,7 @@ def video_download(limit, _file_name):
         response = requests.get(url)
         ip_list = json.loads(response.text)["data"]
     except Exception as e:
-        print(e)
+        print("error ................"+str(e))
 
     def download(_command):
         try:
