@@ -211,6 +211,7 @@ def video_download(limit, _file_name):
     # with ThreadPoolExecutor(max_workers=5) as t:
     #     for href in hrefs:
     #         t.submit(download, href)
+    print("log -------------------")
     pools = []
     for href in hrefs:
         _ip = ip_list.pop() + ":31289"
