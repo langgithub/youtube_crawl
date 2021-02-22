@@ -310,8 +310,10 @@ if __name__ == "__main__":
     # run
     while is_running:
         try:
-            flag = video_download(5, file_name)
+            flag = video_download(1, file_name)
             video_upload(file_name)
             if flag: break
         except Exception as e:
             print(e)
+
+# you-get -o /root/project/youtube_crawl/video_dir -O VnBVjgLW5SM -x 45.81.131.130:31289 -t 30 --itag=18 https://www.youtube.com/watch?v=VnBVjgLW5SM
